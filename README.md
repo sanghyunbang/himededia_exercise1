@@ -59,7 +59,7 @@
 ---
 
 ## 🔧 실행 방법
-### **1. 데이터베이스 설정**
+### **1. 데이터베이스 설정(예시)**
 1. MySQL에서 `library_db` 데이터베이스를 생성:
 ```sql
 CREATE DATABASE library_db;
