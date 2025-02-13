@@ -1,8 +1,9 @@
 package service;
-import dao.RentDAO;
-import dao.BookDAO;
-import model.Rent;
 import java.util.List;
+
+import dao.BookDAO;
+import dao.RentDAO;
+import model.Rent;
 
 public class RentService {
     private RentDAO rentDAO = new RentDAO();
