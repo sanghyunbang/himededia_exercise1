@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class RentController {
     private RentService rentService = new RentService();
     private Scanner scanner = new Scanner(System.in);
+    private Scanner scannerString = new Scanner(System.in);
 
     // 대출 관리 메뉴
     public void manageRentals() {
@@ -42,9 +43,11 @@ public class RentController {
     // 1. 도서 대출 요청
     private void rentBook() {
         System.out.print("회원 ID를 입력하세요: ");
-        int memberId = scanner.nextInt();
+        String memberId = scannerString.nextLine();
+
         System.out.print("대출할 도서 ID를 입력하세요: ");
         int bookId = scanner.nextInt();
+        scanner.nextLine(); // 🚀 **여기서 개행 문자 제거**
 
         if (rentService.rentBook(memberId, bookId)) {
             System.out.println("도서가 성공적으로 대출되었습니다.");
@@ -53,10 +56,11 @@ public class RentController {
         }
     }
 
+
     // 2. 대출 내역 조회
     private void viewRentHistory() {
         System.out.print("회원 ID를 입력하세요: ");
-        int memberId = scanner.nextInt();
+        String memberId = scannerString.nextLine();
 
         rentService.viewRentHistory(memberId);
     }

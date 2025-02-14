@@ -8,24 +8,52 @@ public class BookService {
     private BookDAO bookDAO = new BookDAO();
     private Scanner scanner = new Scanner(System.in);
 
-    // 도서 등록
+ // 도서 등록
     public void addBook() {
         System.out.print("도서 제목: ");
-        String title = scanner.nextLine();
-        System.out.print("ISBN: ");
-        String isbn = scanner.next();
-        System.out.print("저자: ");
-        String author = scanner.next();
-        System.out.print("출판사: ");
-        String publisher = scanner.next();
-        System.out.print("출판 연도: ");
-        int issueYear = scanner.nextInt();
-        System.out.print("가격: ");
-        double price = scanner.nextDouble();
-        System.out.print("보유 권수: ");
-        int stock = scanner.nextInt();
+        String booksTitle = scanner.nextLine();
 
-        Book book = new Book(0, title, isbn, author, publisher, issueYear, price, stock);
+        System.out.print("ISBN: ");
+        String booksISBN = scanner.next();
+
+        System.out.print("출판 연도: ");
+        String booksIssue = scanner.next();  // 출판 연도를 문자열(String)로 변경
+
+        System.out.print("보유 권수: ");
+        int booksQty = scanner.nextInt();
+
+        scanner.nextLine(); // 🚀 버퍼 클리어 (scanner.nextInt() 후 개행 문자 제거)
+
+        System.out.print("저자 이름: ");
+        String authorName = scanner.nextLine();
+
+        System.out.print("출판사: ");
+        String publisherName = scanner.nextLine();
+
+        System.out.print("도서 상태 (New, Good, Fair, Poor): ");
+        String instanceCondition = scanner.nextLine();
+
+        System.out.print("대출 상태 (Available, Borrowed, Lost): ");
+        String instanceStatus = scanner.nextLine();
+
+        // `instanceCreated`, `instanceUpdated`는 DB에서 자동 설정 (CURRENT_TIMESTAMP)
+
+        Book book = new Book(
+            publisherName,   // 출판사 정보
+
+            instanceCondition,   // 책 상태
+            instanceStatus,      // 대출 상태
+            null,  // `instanceCreated` (DB에서 자동 생성)
+            null,  // `instanceUpdated` (DB에서 자동 업데이트)
+
+            booksTitle,  // 도서 제목
+            booksISBN,   // ISBN
+            booksIssue,  // 출판 연도 (String 타입)
+            booksQty,    // 보유 권수
+
+            authorName   // 저자 이름
+        );
+
         if (bookDAO.addBook(book)) {
             System.out.println("도서가 성공적으로 등록되었습니다.");
         } else {
@@ -33,10 +61,17 @@ public class BookService {
         }
     }
 
+    
+    
+    
+    
     // 도서 목록 조회
     public List<Book> getAllBooks() {
         return bookDAO.getAllBooks();
     }
+    
+    
+    
 
     // 도서 검색 (제목, 저자)
     public void searchBooks() {
@@ -49,38 +84,71 @@ public class BookService {
             books.forEach(System.out::println);
         }
     }
+    
+    
+    
 
     // 도서 정보 수정
     public void updateBook() {
         System.out.print("수정할 도서의 ISBN 입력: ");
-        String isbn = scanner.next();
+        String booksISBN = scanner.next();
 
-        Book existingBook = bookDAO.getBookByISBN(isbn);
+        Book existingBook = bookDAO.getBookByISBN(booksISBN);
         if (existingBook == null) {
             System.out.println("해당 ISBN의 도서가 존재하지 않습니다.");
             return;
         }
 
-        System.out.print("새 제목: ");
-        String title = scanner.next();
-        System.out.print("새 저자: ");
-        String author = scanner.next();
-        System.out.print("새 출판사: ");
-        String publisher = scanner.next();
-        System.out.print("새 출판 연도: ");
-        int issueYear = scanner.nextInt();
-        System.out.print("새 가격: ");
-        double price = scanner.nextDouble();
-        System.out.print("새 보유 권수: ");
-        int stock = scanner.nextInt();
+        scanner.nextLine(); // 🚀 `nextInt()`, `next()` 이후 개행 문자 제거
 
-        Book updatedBook = new Book(existingBook.getId(), title, isbn, author, publisher, issueYear, price, stock);
+        System.out.print("새 제목: ");
+        String booksTitle = scanner.nextLine();
+
+        System.out.print("새 저자 이름: ");
+        String authorName = scanner.nextLine();
+
+        System.out.print("새 출판사: ");
+        String publisherName = scanner.nextLine();
+
+        System.out.print("새 출판 연도: ");
+        String booksIssue = scanner.next();  // 기존 `int` → `String`으로 변경
+
+        System.out.print("새 보유 권수: ");
+        int booksQty = scanner.nextInt();
+
+        scanner.nextLine(); // 🚀 개행 문자 제거
+
+        System.out.print("새 도서 상태 (New, Good, Fair, Poor): ");
+        String instanceCondition = scanner.nextLine();
+
+        System.out.print("새 대출 상태 (Available, Borrowed, Lost): ");
+        String instanceStatus = scanner.nextLine();
+
+        // `instanceCreated`, `instanceUpdated`는 DB에서 자동 설정 (CURRENT_TIMESTAMP)
+
+        Book updatedBook = new Book(
+            publisherName,    // 출판사 정보
+
+            instanceCondition,    // 책 상태
+            instanceStatus,       // 대출 상태
+            null,  // `instanceCreated` (DB에서 자동 생성)
+            null,  // `instanceUpdated` (DB에서 자동 업데이트)
+
+            booksTitle,  // 도서 제목
+            booksISBN,   // ISBN (변경되지 않음)
+            booksIssue,  // 출판 연도 (String 타입)
+            booksQty,    // 보유 권수
+
+            authorName   // 저자 이름
+        );
+
         if (bookDAO.updateBook(updatedBook)) {
             System.out.println("도서 정보가 성공적으로 수정되었습니다.");
         } else {
             System.out.println("도서 정보 수정에 실패하였습니다.");
         }
     }
+
 
     // 도서 삭제
     public void deleteBook() {

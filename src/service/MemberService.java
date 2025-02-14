@@ -1,4 +1,3 @@
-
 package service;
 import dao.MemberDAO;
 import model.Member;
@@ -8,13 +7,12 @@ public class MemberService {
     private MemberDAO memberDAO = new MemberDAO();
     private Scanner scanner = new Scanner(System.in);
 
-    
-    // 회원 가입
+    // 📌 회원 가입
     public void register() {
         System.out.print("사용할 사용자명을 입력하세요: ");
         String username = scanner.next();
         System.out.print("비밀번호를 입력하세요: ");
-        String password = scanner.next(); // 실제 구현에서는 비밀번호 해싱 필요
+        String password = scanner.next(); // 🚨 실제 구현에서는 비밀번호 해싱 필요
         System.out.print("이름을 입력하세요: ");
         String name = scanner.next();
         System.out.print("역할을 입력하세요 (USER/ADMIN): ");
@@ -26,7 +24,9 @@ public class MemberService {
         System.out.print("이메일을 입력하세요: ");
         String email = scanner.next();
 
-        Member member = new Member(0, username, password, name, role, gender, mobile, email);
+        // 🚀 **id(0) 제거 → 올바른 생성자 사용**
+        Member member = new Member(username, password, name, role, gender, mobile, email);
+
         if (memberDAO.registerMember(member)) {
             System.out.println("회원 가입이 완료되었습니다.");
         } else {
@@ -34,8 +34,7 @@ public class MemberService {
         }
     }
 
-    
-    // 로그인
+    // 📌 로그인
     public Member login() {
         System.out.print("사용자명을 입력하세요: ");
         String username = scanner.next();
@@ -50,8 +49,8 @@ public class MemberService {
         }
         return member;
     }
-    
-    
+
+    // 📌 회원 정보 수정
     public void updateMember(Member member) {
         System.out.println("\n회원 정보 수정");
         System.out.print("새 이름: ");
@@ -74,13 +73,14 @@ public class MemberService {
             System.out.println("회원 정보 수정에 실패하였습니다.");
         }
     }
-    
-    
+
+    // 📌 회원 탈퇴
     public void deleteMember(Member member) {
         System.out.print("정말 탈퇴하시겠습니까? (Y/N): ");
         String confirm = scanner.next();
         if (confirm.equalsIgnoreCase("Y")) {
-            if (memberDAO.deleteMember(member.getId())) {
+            // 🚀 **getId() 대신 getUsername() 사용**
+            if (memberDAO.deleteMember(member.getUsername())) {
                 System.out.println("회원 탈퇴가 완료되었습니다.");
                 System.exit(0); // 프로그램 종료 (또는 로그아웃 처리)
             } else {
@@ -90,7 +90,5 @@ public class MemberService {
             System.out.println("회원 탈퇴가 취소되었습니다.");
         }
     }
-
-
-    
 }
+

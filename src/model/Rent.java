@@ -2,55 +2,73 @@ package model;
 import java.sql.Timestamp;
 
 public class Rent {
-    private int id;
-    private int bookId;
-    private int memberId;
+	
+    private int rentID;
+    private String username;
+    private int bookInstance;
     private Timestamp rentDate;
-    private Timestamp expectedReturn;
+    private Timestamp dueDate;
     private Timestamp returnedDate;
-    private Timestamp extendedDate;
-    private String status;
+    
+    private int renewalCount;
+    private int lateFee;
+
 
     // 생성자
-    public Rent(int id, int bookId, int memberId, Timestamp rentDate, Timestamp expectedReturn, Timestamp returnedDate, Timestamp extendedDate, String status) {
-        this.id = id;
-        this.bookId = bookId;
-        this.memberId = memberId;
+    public Rent() {}
+    
+    public Rent (int rentID,
+    		     String username, 
+    		     int bookInstance, 
+    		     Timestamp rentDate, 
+    		     Timestamp dueDate, 
+    		     Timestamp returnedDate, 
+    		     int renewalCount,
+    		     int lateFee) {
+    	
+        this.rentID = rentID;
+        this.bookInstance = bookInstance;
+        this.username = username;
         this.rentDate = rentDate;
-        this.expectedReturn = expectedReturn;
+        this.dueDate = dueDate;
         this.returnedDate = returnedDate;
-        this.extendedDate = extendedDate;
-        this.status = status;
+        this.renewalCount=renewalCount;
+	    this.lateFee = lateFee;
     }
 
     // Getter & Setter
-    public int getId() { return id; }
-    public int getBookId() { return bookId; }
-    public int getMemberId() { return memberId; }
+    public int getId() { return rentID; }
+    public int getBookId() { return bookInstance; }
+    public String getMemberId() { return username; }
     public Timestamp getRentDate() { return rentDate; }
-    public Timestamp getExpectedReturn() { return expectedReturn; }
+    public Timestamp getdueDate() { return dueDate; }
     public Timestamp getReturnedDate() { return returnedDate; }
-    public Timestamp getExtendedDate() { return extendedDate; }
-    public String getStatus() { return status; }
+    public int getRenwalCount() { return renewalCount; }
+    public int getLateFee() { return lateFee; }
 
-    public void setId(int id) { this.id = id; }
-    public void setBookId(int bookId) { this.bookId = bookId; }
-    public void setMemberId(int memberId) { this.memberId = memberId; }
+    
+    
+    public void setId(int rentID) { this.rentID = rentID; }
+    public void setBookId(int bookInstance) { this.bookInstance = bookInstance; }
+    public void setMemberId(String username) { this.username = username; }
     public void setRentDate(Timestamp rentDate) { this.rentDate = rentDate; }
-    public void setExpectedReturn(Timestamp expectedReturn) { this.expectedReturn = expectedReturn; }
+    public void setdueDate(Timestamp dueDate) { this.dueDate = dueDate; }
     public void setReturnedDate(Timestamp returnedDate) { this.returnedDate = returnedDate; }
-    public void setExtendedDate(Timestamp extendedDate) { this.extendedDate = extendedDate; }
-    public void setStatus(String status) { this.status = status; }
 
+    public void setRenwalCount(int renewalCount) { this.renewalCount = renewalCount; }
+    public void setLateFee(int lateFee) { this.lateFee = lateFee; }
+
+    
+    
     @Override
     public String toString() {
-        return "대출 ID: " + id +
-                ", 도서 ID: " + bookId +
-                ", 회원 ID: " + memberId +
+        return "대출 rentID: " + rentID +
+                ", 도서 ID: " + bookInstance +
+                ", 회원 ID: " + username +
                 ", 대출일: " + rentDate +
-                ", 반납 예정일: " + expectedReturn +
+                ", 반납 예정일: " + dueDate +
                 ", 반납일: " + (returnedDate != null ? returnedDate : "미반납") +
-                ", 연장일: " + (extendedDate != null ? extendedDate : "미연장") +
-                ", 상태: " + status;
+                ", 연장가능횟수: " + renewalCount +
+                 ", 연체료: " + lateFee;
     }
 }
