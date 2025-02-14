@@ -73,12 +73,19 @@ CREATE TABLE Publisher (
 );
 
 -- 저자 테이블
-CREATE TABLE Author (
-    author_id INT AUTO_INCREMENT PRIMARY KEY,
+-- 📌 출판사 테이블
+CREATE TABLE Publisher (
+    publisher_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE
 );
 
--- 책 정보 테이블 (ISBN 단위)
+-- 📌 저자 테이블
+CREATE TABLE Author (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL UNIQUE
+);
+
+-- 📌 책 정보 테이블 (ISBN 단위)
 CREATE TABLE Books (
     book_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -91,7 +98,7 @@ CREATE TABLE Books (
     FOREIGN KEY (author_id) REFERENCES Author(author_id) ON DELETE SET NULL
 );
 
--- 개별 책 인스턴스 테이블 (실제 물리적 책 관리)
+-- 📌 개별 책 인스턴스 테이블 (실제 물리적 책 관리)
 CREATE TABLE BookInstance (
     instance_id INT AUTO_INCREMENT PRIMARY KEY,
     book_id INT NOT NULL,
@@ -99,30 +106,53 @@ CREATE TABLE BookInstance (
     status ENUM('Available', 'Borrowed', 'Lost') DEFAULT 'Available',
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_renewed TINYINT(1) DEFAULT 0,  -- 연장 여부 추가
     FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE
 );
 
--- 회원 정보 테이블
-CREATE TABLE Users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(20) UNIQUE,
-    address TEXT
+-- 📌 회원 정보 테이블
+CREATE TABLE Member (
+    username VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
+    gender ENUM('M', 'F') DEFAULT NULL,
+    mobile VARCHAR(20) UNIQUE DEFAULT NULL,
+    email VARCHAR(100) UNIQUE DEFAULT NULL,
+    registered TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    current_rentals INT DEFAULT 0,
+    has_overdue TINYINT(1) DEFAULT 0
 );
 
--- 도서 대출 테이블 (현재 대출 중인 책)
+-- 📌 도서 대출 테이블 (현재 대출 중인 책)
 CREATE TABLE Rent (
     rent_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    username VARCHAR(50) NOT NULL,
     instance_id INT NOT NULL,
-    rent_date DATE NOT NULL,
-    due_date DATE NOT NULL,
-    return_date DATE DEFAULT NULL,
+    rent_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    return_date TIMESTAMP DEFAULT NULL,
     late_fee INT DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    renewal_count INT DEFAULT 3,  -- 연장 가능 횟수 추가
+    FOREIGN KEY (username) REFERENCES Member(username) ON DELETE CASCADE,
     FOREIGN KEY (instance_id) REFERENCES BookInstance(instance_id) ON DELETE CASCADE
 );
+
+-- 📌 대출 이력 테이블 (반납된 책 기록)
+CREATE TABLE RentHistory (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    instance_id INT NOT NULL,
+    rent_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    return_date TIMESTAMP DEFAULT NULL,
+    late_fee INT DEFAULT 0,
+    renewal_count INT DEFAULT 3,
+    FOREIGN KEY (username) REFERENCES Member(username) ON DELETE CASCADE,
+    FOREIGN KEY (instance_id) REFERENCES BookInstance(instance_id) ON DELETE CASCADE
+);
+
 ```
 
 ### **2. 프로젝트 실행**
